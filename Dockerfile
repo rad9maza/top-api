@@ -1,7 +1,7 @@
 FROM node:14-alpine
 WORKDIR /opt/app
 ADD package.json package.json
-ADD npm install
+RUN npm install
 ADD . .
 RUN npm run build
 RUN npm prune --production
