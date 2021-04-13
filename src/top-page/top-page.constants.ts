@@ -1,0 +1,1 @@
+export const TOP_PAGE_NOT_FOUND_ERROR = 'Топ с таким ID не найден'
