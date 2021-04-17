@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsDate,
   IsEnum,
   IsNumber,
   IsOptional,
@@ -17,7 +18,14 @@ export class HhDataDto {
   juniorSalary: number;
 
   @IsNumber()
+  middleSalary: number;
+
+  @IsNumber()
   seniorSalary: number;
+
+  @IsOptional()
+  @IsDate()
+  updatedAt: Date;
 }
 
 export class TopPageAdvantageDto {
