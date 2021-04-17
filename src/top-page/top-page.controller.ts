@@ -3,15 +3,16 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode, Logger,
+  HttpCode,
+  Logger,
   NotFoundException,
   Param,
   Patch,
   Post,
   UseGuards,
   UsePipes,
-  ValidationPipe
-} from "@nestjs/common";
+  ValidationPipe,
+} from '@nestjs/common';
 import { TopPageModel } from './top-page.model';
 import { FindTopPageDto } from './dto/find-top-page.dto';
 import { IdValidationPipe } from '../pipes/ad-validation.pipe';
@@ -19,14 +20,15 @@ import { CreateTopPageDto } from './dto/create-top-page.dto';
 import { TopPageService } from './top-page.service';
 import { TOP_PAGE_NOT_FOUND_ERROR } from './top-page.constants';
 import { JwtGuard } from '../auth/guards/jwt.guard';
-import { of } from 'rxjs';
 import { HhService } from '../hh/hh.service';
+import { Cron, CronExpression/*, SchedulerRegistry*/ } from '@nestjs/schedule';
 
 @Controller('top-page')
 export class TopPageController {
   constructor(
     private readonly topPageService: TopPageService,
-    private readonly hhService: HhService
+    private readonly hhService: HhService,
+    // private readonly schedulerRegistry: SchedulerRegistry
   ) {}
 
   @UseGuards(JwtGuard)
@@ -67,9 +69,11 @@ export class TopPageController {
     return await this.topPageService.findByText(text);
   }
 
-  @HttpCode(200)
-  @Post('test')
-  async test(@Param('text') text: string) {
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {name: 'UpdateHhInfo'})
+  async updateHhInfo() {
+    // const job = this.schedulerRegistry.getCronJob('UpdateHhInfo');
+    // job.start();
+
     const data = await this.topPageService.findForHhUpdate(new Date());
     for (const page of data) {
       const hhData = await this.hhService.getData(page.category);
